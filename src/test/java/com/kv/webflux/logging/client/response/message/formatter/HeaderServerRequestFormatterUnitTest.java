@@ -14,13 +14,13 @@ public class HeaderServerRequestFormatterUnitTest extends BaseTest {
 
     private final HeaderClientResponseFormatter formatter = new HeaderClientResponseFormatter();
 
-    private final ClientResponse response = ClientResponse.create(HttpStatus.OK)
-            .header(HttpHeaders.ACCEPT, "application/json")
-            .header(HttpHeaders.CONTENT_TYPE, "application/json")
-            .header(HttpHeaders.AUTHORIZATION, "Some-Token")
-            .header(HttpHeaders.AUTHORIZATION, "Any-Basic-Auth")
-            .build();
-
+    private final ClientResponse response =
+            ClientResponse.create(HttpStatus.OK)
+                    .header(HttpHeaders.ACCEPT, "application/json")
+                    .header(HttpHeaders.CONTENT_TYPE, "application/json")
+                    .header(HttpHeaders.AUTHORIZATION, "Some-Token")
+                    .header(HttpHeaders.AUTHORIZATION, "Any-Basic-Auth")
+                    .build();
 
     @Test
     void addData_whenDontNeedToLog_thenReturnSourceMessage() {
@@ -41,16 +41,16 @@ public class HeaderServerRequestFormatterUnitTest extends BaseTest {
                 () -> assertTrue(withHeaders.contains("Accept=application/json")),
                 () -> assertTrue(withHeaders.contains("Content-Type=application/json")),
                 () -> assertTrue(withHeaders.contains("Authorization=Some-Token")),
-                () -> assertTrue(withHeaders.contains("Authorization=Any-Basic-Auth"))
-        );
+                () -> assertTrue(withHeaders.contains("Authorization=Any-Basic-Auth")));
     }
 
     @Test
     void addData_whenLogAndMaskHeaders_thenReturnWithMaskedHeaders() {
-        LoggingProperties properties = LoggingProperties.builder()
-                .logHeaders(true)
-                .maskedHeaders(HttpHeaders.AUTHORIZATION, "AbsentHeader321")
-                .build();
+        LoggingProperties properties =
+                LoggingProperties.builder()
+                        .logHeaders(true)
+                        .maskedHeaders(HttpHeaders.AUTHORIZATION, "AbsentHeader321")
+                        .build();
 
         String withHeaders = formatter.formatMessage(response, properties);
         assertAll(
@@ -59,7 +59,6 @@ public class HeaderServerRequestFormatterUnitTest extends BaseTest {
                 () -> assertTrue(withHeaders.contains("Accept=application/json")),
                 () -> assertTrue(withHeaders.contains("Content-Type=application/json")),
                 () -> assertTrue(withHeaders.contains("Authorization={masked}")),
-                () -> assertFalse(withHeaders.contains("AbsentHeader321"))
-        );
+                () -> assertFalse(withHeaders.contains("AbsentHeader321")));
     }
 }

@@ -19,23 +19,32 @@ public class ClientResponseLoggingFilterFactoryUnitTest extends BaseTest {
     void createDefaultFilter() {
         LoggingProperties properties = LoggingProperties.builder().build();
 
-        ExchangeFilterFunction filterFunction = ClientResponseLoggingFilterFactory.defaultFilter(properties);
+        ExchangeFilterFunction filterFunction =
+                ClientResponseLoggingFilterFactory.defaultFilter(properties);
         assertTrue(filterFunction instanceof ClientResponseLoggingFilter);
 
         ClientResponseLoggingFilter logFilter = (ClientResponseLoggingFilter) filterFunction;
 
-        ResponseMessageCreator messageCreator = (ResponseMessageCreator) getField(logFilter, "messageCreator");
+        ResponseMessageCreator messageCreator =
+                (ResponseMessageCreator) getField(logFilter, "messageCreator");
         assertTrue(messageCreator instanceof BaseResponseMessageCreator);
 
         List<ResponseMetadataMessageFormatter> metadataFormatters =
-                (List<ResponseMetadataMessageFormatter>) getField(messageCreator, "metadataFormatters");
+                (List<ResponseMetadataMessageFormatter>)
+                        getField(messageCreator, "metadataFormatters");
 
         assertNotNull(metadataFormatters);
         assertEquals(3, metadataFormatters.size());
 
-        assertTrue(metadataFormatters.stream().anyMatch(f -> f instanceof HeaderClientResponseFormatter));
-        assertTrue(metadataFormatters.stream().anyMatch(f -> f instanceof CookieClientResponseFormatter));
-        assertTrue(metadataFormatters.stream().anyMatch(f -> f instanceof ReqIdClientResponseFormatter));
+        assertTrue(
+                metadataFormatters.stream()
+                        .anyMatch(f -> f instanceof HeaderClientResponseFormatter));
+        assertTrue(
+                metadataFormatters.stream()
+                        .anyMatch(f -> f instanceof CookieClientResponseFormatter));
+        assertTrue(
+                metadataFormatters.stream()
+                        .anyMatch(f -> f instanceof ReqIdClientResponseFormatter));
 
         assertNotNull(getField(messageCreator, "bodyFormatter"));
     }

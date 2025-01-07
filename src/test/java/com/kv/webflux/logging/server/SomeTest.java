@@ -17,7 +17,8 @@ import org.springframework.http.MediaType;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
         classes = SomeTest.NettyConfig.class)
 public class SomeTest extends BaseIntegrationTest {
 
@@ -26,29 +27,25 @@ public class SomeTest extends BaseIntegrationTest {
         TestDto dto = new TestDto(RandomString.make(), RandomString.make());
         String requestBody = new ObjectMapper().writeValueAsString(dto);
 
-        String result = createWebClient().post()
-                .uri("/test/endpoint")
-
-                .header(HttpHeaders.REFERER, RandomString.make())
-                .header(HttpHeaders.AUTHORIZATION, RandomString.make())
-                .header(HttpHeaders.COOKIE, RandomString.make())
-
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.ALL)
-
-                .cookie("Cookie-1", RandomString.make(10))
-                .cookie("Cookie-1", RandomString.make(10))
-                .cookie("Cookie-3", RandomString.make(5))
-
-                .bodyValue(requestBody)
-
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+        String result =
+                createWebClient()
+                        .post()
+                        .uri("/test/endpoint")
+                        .header(HttpHeaders.REFERER, RandomString.make())
+                        .header(HttpHeaders.AUTHORIZATION, RandomString.make())
+                        .header(HttpHeaders.COOKIE, RandomString.make())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.ALL)
+                        .cookie("Cookie-1", RandomString.make(10))
+                        .cookie("Cookie-1", RandomString.make(10))
+                        .cookie("Cookie-3", RandomString.make(5))
+                        .bodyValue(requestBody)
+                        .retrieve()
+                        .bodyToMono(String.class)
+                        .block();
 
         assertEquals(requestBody + TestController.RESPONSE_PREFIX, result);
     }
-
 
     @TestConfiguration
     public static class NettyConfig {

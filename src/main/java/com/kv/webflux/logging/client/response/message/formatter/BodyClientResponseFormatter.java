@@ -13,23 +13,20 @@ public class BodyClientResponseFormatter {
 
     private final BodyProvider provider = new BodyProvider();
 
-
     public Mono<ResponseData> formatMessage(ClientResponse response, LoggingProperties properties) {
         return properties.isLogBody()
                 ? formatMessage(response)
                 : Mono.just(new ResponseData(response, LoggingUtils.EMPTY_MESSAGE));
     }
 
-
     private Mono<ResponseData> formatMessage(ClientResponse response) {
         return response.bodyToMono(DataBuffer.class)
-                .map(body -> {
-                    ClientResponse cloned = response.mutate()
-                            .body(Flux.just(body))
-                            .build();
+                .map(
+                        body -> {
+                            ClientResponse cloned = response.mutate().body(Flux.just(body)).build();
 
-                    return new ResponseData(cloned, provider.createBodyMessage(body));
-                })
+                            return new ResponseData(cloned, provider.createBodyMessage(body));
+                        })
                 .defaultIfEmpty(new ResponseData(response, provider.createNoBodyMessage()));
     }
 }

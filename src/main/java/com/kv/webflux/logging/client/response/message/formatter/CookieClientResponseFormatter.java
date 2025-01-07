@@ -8,7 +8,6 @@ public class CookieClientResponseFormatter implements ResponseMetadataMessageFor
 
     private final CookieProvider provider = new CookieProvider();
 
-
     @Override
     public String formatMessage(ClientResponse response, LoggingProperties properties) {
         return provider.createResponseMessage(response.cookies(), properties);

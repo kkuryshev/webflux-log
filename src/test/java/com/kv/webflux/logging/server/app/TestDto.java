@@ -3,13 +3,11 @@ package com.kv.webflux.logging.server.app;
 import java.io.Serializable;
 import java.util.Objects;
 
-
 public class TestDto implements Serializable {
     private String value0;
     private String value1;
 
-    public TestDto() {
-    }
+    public TestDto() {}
 
     public TestDto(String value0, String value1) {
         this.value0 = value0;
@@ -47,9 +45,6 @@ public class TestDto implements Serializable {
 
     @Override
     public String toString() {
-        return "TestDto{" +
-                "value0='" + value0 + '\'' +
-                ", value1='" + value1 + '\'' +
-                '}';
+        return "TestDto{" + "value0='" + value0 + '\'' + ", value1='" + value1 + '\'' + '}';
     }
 }

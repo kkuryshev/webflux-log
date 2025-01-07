@@ -11,13 +11,11 @@ public final class ReqIdProvider {
                 : LoggingUtils.EMPTY_MESSAGE;
     }
 
-
     public String createFromLogId(String logId, LoggingProperties properties) {
         return properties.isLogRequestId()
                 ? create(logId, properties.getRequestIdPrefix()).trim()
                 : LoggingUtils.EMPTY_MESSAGE;
     }
-
 
     private String create(String reqId, String reqIdPrefix) {
         if (reqIdPrefix != null) {

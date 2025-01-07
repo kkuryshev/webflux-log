@@ -17,7 +17,6 @@ public class ReqIdClientResponseFormatterUnitTest extends BaseTest {
 
     private final ClientResponse response = ClientResponse.create(HttpStatus.OK).build();
 
-
     @Test
     void addData_whenDontNeedToLog_thenReturnSourceMessage() {
         LoggingProperties properties = LoggingProperties.builder().logRequestId(false).build();
@@ -34,23 +33,26 @@ public class ReqIdClientResponseFormatterUnitTest extends BaseTest {
         assertAll(
                 () -> assertNotNull(withReqId),
                 () -> assertTrue(withReqId.contains("REQ-ID:")),
-                () -> assertTrue(withReqId.contains(TestUtils.formatToLoggedReqId(response.logPrefix())))
-        );
+                () ->
+                        assertTrue(
+                                withReqId.contains(
+                                        TestUtils.formatToLoggedReqId(response.logPrefix()))));
     }
 
     @Test
     void addData_whenNeedLog_thenReturnWithReqIdAndWithReqIdPrefix() {
         String reqIdPrefix = RandomString.make(20);
-        LoggingProperties properties = LoggingProperties.builder()
-                .logRequestId(true)
-                .requestIdPrefix(reqIdPrefix)
-                .build();
+        LoggingProperties properties =
+                LoggingProperties.builder().logRequestId(true).requestIdPrefix(reqIdPrefix).build();
 
         String withReqId = formatter.formatMessage(response, properties);
         assertAll(
                 () -> assertNotNull(withReqId),
                 () -> assertTrue(withReqId.contains("REQ-ID:")),
-                () -> assertTrue(withReqId.contains(TestUtils.formatToLoggedReqId(response.logPrefix(), reqIdPrefix)))
-        );
+                () ->
+                        assertTrue(
+                                withReqId.contains(
+                                        TestUtils.formatToLoggedReqId(
+                                                response.logPrefix(), reqIdPrefix))));
     }
 }

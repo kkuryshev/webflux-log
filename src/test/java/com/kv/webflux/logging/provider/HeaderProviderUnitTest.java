@@ -18,7 +18,6 @@ public class HeaderProviderUnitTest extends BaseTest {
 
     private final HeaderProvider provider = new HeaderProvider();
 
-
     @Test
     void createMessage_whenNoMasked_thenAddAll() {
         String headerName0 = RandomString.make();
@@ -43,8 +42,7 @@ public class HeaderProviderUnitTest extends BaseTest {
                 () -> assertTrue(actual.contains(" HEADERS: [ ")),
                 () -> assertTrue(actual.contains(headerName0 + "=" + headerValue0)),
                 () -> assertTrue(actual.contains(headerName1 + "=" + headerValue1)),
-                () -> assertTrue(actual.contains(headerName0 + "=" + headerValue2))
-        );
+                () -> assertTrue(actual.contains(headerName0 + "=" + headerValue2)));
     }
 
     @Test
@@ -62,10 +60,11 @@ public class HeaderProviderUnitTest extends BaseTest {
 
         String notExistingHeaderName = RandomString.make();
 
-        LoggingProperties logProps = LoggingProperties.builder()
-                .logHeaders(true)
-                .maskedHeaders(headerName0, headerName1, notExistingHeaderName)
-                .build();
+        LoggingProperties logProps =
+                LoggingProperties.builder()
+                        .logHeaders(true)
+                        .maskedHeaders(headerName0, headerName1, notExistingHeaderName)
+                        .build();
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add(headerName0, headerValue0);
@@ -78,18 +77,17 @@ public class HeaderProviderUnitTest extends BaseTest {
 
         assertAll(
                 () -> assertTrue(actual.contains(" HEADERS: [ ")),
-
                 () -> assertFalse(actual.contains(headerName0 + "=" + headerValue0)),
-                () -> assertEquals(2, StringUtils.countMatches(actual, headerName0 + "=" + LoggingUtils.DEFAULT_MASK)),
-
+                () ->
+                        assertEquals(
+                                2,
+                                StringUtils.countMatches(
+                                        actual, headerName0 + "=" + LoggingUtils.DEFAULT_MASK)),
                 () -> assertFalse(actual.contains(headerName1 + "=" + headerValue1)),
                 () -> assertTrue(actual.contains(headerName1 + "=" + LoggingUtils.DEFAULT_MASK)),
-
                 () -> assertFalse(actual.contains(headerName0 + "=" + headerValue3)),
                 () -> assertTrue(actual.contains(headerName2 + "=" + headerValue2)),
-
-                () -> assertFalse(actual.contains(notExistingHeaderName))
-        );
+                () -> assertFalse(actual.contains(notExistingHeaderName)));
     }
 
     @Test
@@ -117,7 +115,6 @@ public class HeaderProviderUnitTest extends BaseTest {
                 () -> assertTrue(actual.contains(" HEADERS: [ ")),
                 () -> assertFalse(actual.contains(headerName0 + "=" + headerValue0)),
                 () -> assertFalse(actual.contains(headerName1 + "=" + headerValue1)),
-                () -> assertFalse(actual.contains(headerName0 + "=" + headerValue2))
-        );
+                () -> assertFalse(actual.contains(headerName0 + "=" + headerValue2)));
     }
 }

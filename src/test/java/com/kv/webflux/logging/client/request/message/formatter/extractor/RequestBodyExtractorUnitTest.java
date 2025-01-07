@@ -21,14 +21,12 @@ import static org.mockito.Mockito.verifyNoInteractions;
 @ExtendWith(MockitoExtension.class)
 public class RequestBodyExtractorUnitTest extends BaseTest {
 
-    @InjectMocks
-    private RequestBodyExtractor bodyExtractor;
+    @InjectMocks private RequestBodyExtractor bodyExtractor;
 
-    @Spy
-    private RequestBodyMapper requestBodyMapper;
+    @Spy private RequestBodyMapper requestBodyMapper;
 
-    private final ClientRequest.Builder reqBuilder = ClientRequest.create(HttpMethod.GET, URI.create("/someUri"));
-
+    private final ClientRequest.Builder reqBuilder =
+            ClientRequest.create(HttpMethod.GET, URI.create("/someUri"));
 
     @Test
     void extractBody_whenNoBody_thenReturnEmpty() {
@@ -41,7 +39,8 @@ public class RequestBodyExtractorUnitTest extends BaseTest {
     @Test
     void extractBody_whenWithBody_thenReturnString() {
         String expectedStr = RandomString.make(20);
-        ClientRequest requestWithoutBody = reqBuilder.body(Mono.just(expectedStr), String.class).build();
+        ClientRequest requestWithoutBody =
+                reqBuilder.body(Mono.just(expectedStr), String.class).build();
 
         String actualStr = bodyExtractor.extractBody(requestWithoutBody).block();
         assertEquals(expectedStr, actualStr);

@@ -18,8 +18,8 @@ public class ClientRequestLoggingFilterFactory {
         formatters.add(new CookieClientRequestFormatter());
 
         return new ClientRequestLoggingFilter(
-                new BaseRequestMessageCreator(loggingProperties, formatters, new BodyClientRequestFormatter())
-        );
+                new BaseRequestMessageCreator(
+                        loggingProperties, formatters, new BodyClientRequestFormatter()));
     }
 
     public static ExchangeFilterFunction customFilter(RequestMessageCreator requestMessageCreator) {

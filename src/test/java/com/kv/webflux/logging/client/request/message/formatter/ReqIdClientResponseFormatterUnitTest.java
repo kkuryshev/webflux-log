@@ -16,8 +16,8 @@ public class ReqIdClientResponseFormatterUnitTest extends BaseTest {
 
     private final ReqIdClientRequestFormatter formatter = new ReqIdClientRequestFormatter();
 
-    private final ClientRequest testRequest = ClientRequest.create(HttpMethod.GET, URI.create("/someUri")).build();
-
+    private final ClientRequest testRequest =
+            ClientRequest.create(HttpMethod.GET, URI.create("/someUri")).build();
 
     @Test
     void addData_whenDontNeedToLog_thenReturnSourceMessage() {
@@ -36,24 +36,25 @@ public class ReqIdClientResponseFormatterUnitTest extends BaseTest {
         assertNotNull(withReqId);
         assertAll(
                 () -> assertTrue(withReqId.contains("REQ-ID:")),
-                () -> assertTrue(withReqId.contains(formatToLoggedReqId(testRequest.logPrefix())))
-        );
+                () -> assertTrue(withReqId.contains(formatToLoggedReqId(testRequest.logPrefix()))));
     }
 
     @Test
     void addData_whenNeedLog_thenReturnWithReqIdAndWithReqIdPrefix() {
         String reqIdPrefix = RandomString.make(20);
-        LoggingProperties properties = LoggingProperties.builder()
-                .logRequestId(true)
-                .requestIdPrefix(reqIdPrefix)
-                .build();
+        LoggingProperties properties =
+                LoggingProperties.builder().logRequestId(true).requestIdPrefix(reqIdPrefix).build();
 
         String withReqId = formatter.formatMessage(testRequest, properties);
         assertNotNull(withReqId);
         assertAll(
                 () -> assertTrue(withReqId.contains("REQ-ID:")),
-                () -> assertTrue(withReqId.contains(reqIdPrefix + "_" + formatToLoggedReqId(testRequest.logPrefix())))
-        );
+                () ->
+                        assertTrue(
+                                withReqId.contains(
+                                        reqIdPrefix
+                                                + "_"
+                                                + formatToLoggedReqId(testRequest.logPrefix()))));
     }
 
     private String formatToLoggedReqId(String logPrefix) {

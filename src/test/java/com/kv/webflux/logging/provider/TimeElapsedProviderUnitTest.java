@@ -13,7 +13,6 @@ public class TimeElapsedProviderUnitTest extends BaseTest {
 
     private final TimeElapsedProvider provider = new TimeElapsedProvider();
 
-
     @Test
     void createMessage_whenLessThan1000Millis_thenAddWithMS() {
         long timeElapsedMillis = new Random().nextInt(1000);

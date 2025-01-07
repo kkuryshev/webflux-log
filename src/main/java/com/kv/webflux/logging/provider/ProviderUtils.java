@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 
 final class ProviderUtils {
 
-    static <T> Map<String, List<T>> setMaskToValues(Map<String, List<T>> multiValueMap,
-                                                    String[] objectKeysToMask, T mask) {
+    static <T> Map<String, List<T>> setMaskToValues(
+            Map<String, List<T>> multiValueMap, String[] objectKeysToMask, T mask) {
 
         LinkedCaseInsensitiveMap<List<T>> caseInsensitiveMap = new LinkedCaseInsensitiveMap<>();
         caseInsensitiveMap.putAll(multiValueMap);
@@ -21,8 +21,8 @@ final class ProviderUtils {
         return caseInsensitiveMap;
     }
 
-    static <T> void setMaskToValue(LinkedCaseInsensitiveMap<List<T>> caseInsensitiveMap,
-                                   String objectKeyToMask, T mask) {
+    static <T> void setMaskToValue(
+            LinkedCaseInsensitiveMap<List<T>> caseInsensitiveMap, String objectKeyToMask, T mask) {
 
         List<T> values = caseInsensitiveMap.get(objectKeyToMask);
 
@@ -31,9 +31,7 @@ final class ProviderUtils {
                 caseInsensitiveMap.put(objectKeyToMask, List.of(mask));
 
             } else {
-                List<T> masked = values.stream()
-                        .map(value -> mask)
-                        .collect(Collectors.toList());
+                List<T> masked = values.stream().map(value -> mask).collect(Collectors.toList());
 
                 caseInsensitiveMap.put(objectKeyToMask, masked);
             }

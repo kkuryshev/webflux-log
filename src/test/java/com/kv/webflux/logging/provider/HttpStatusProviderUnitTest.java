@@ -11,7 +11,6 @@ public class HttpStatusProviderUnitTest extends BaseTest {
 
     private final HttpStatusProvider provider = new HttpStatusProvider();
 
-
     @Test
     void createMessage_whenNullHttpStatus_thenAddNull() {
         Integer nullStatus = null;

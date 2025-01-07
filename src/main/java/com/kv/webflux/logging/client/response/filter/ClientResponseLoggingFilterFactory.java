@@ -1,6 +1,5 @@
 package com.kv.webflux.logging.client.response.filter;
 
-
 import com.kv.webflux.logging.client.LoggingProperties;
 import com.kv.webflux.logging.client.response.message.BaseResponseMessageCreator;
 import com.kv.webflux.logging.client.response.message.ResponseMessageCreator;
@@ -19,11 +18,12 @@ public class ClientResponseLoggingFilterFactory {
         formatters.add(new CookieClientResponseFormatter());
 
         return new ClientResponseLoggingFilter(
-                new BaseResponseMessageCreator(loggingProperties, formatters, new BodyClientResponseFormatter())
-        );
+                new BaseResponseMessageCreator(
+                        loggingProperties, formatters, new BodyClientResponseFormatter()));
     }
 
-    public static ExchangeFilterFunction customFilter(ResponseMessageCreator responseMessageCreator) {
+    public static ExchangeFilterFunction customFilter(
+            ResponseMessageCreator responseMessageCreator) {
         return new ClientResponseLoggingFilter(responseMessageCreator);
     }
 }

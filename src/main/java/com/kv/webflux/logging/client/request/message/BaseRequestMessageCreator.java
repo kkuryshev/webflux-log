@@ -14,34 +14,37 @@ public class BaseRequestMessageCreator implements RequestMessageCreator {
     private final List<RequestMetadataMessageFormatter> metadataFormatters;
     private final BodyClientRequestFormatter bodyFormatter;
 
-
-    public BaseRequestMessageCreator(LoggingProperties properties,
-                                     List<RequestMetadataMessageFormatter> metadataFormatters) {
+    public BaseRequestMessageCreator(
+            LoggingProperties properties,
+            List<RequestMetadataMessageFormatter> metadataFormatters) {
         this(properties, metadataFormatters, null);
     }
 
-    public BaseRequestMessageCreator(LoggingProperties properties,
-                                     List<RequestMetadataMessageFormatter> metadataFormatters,
-                                     BodyClientRequestFormatter bodyFormatter) {
+    public BaseRequestMessageCreator(
+            LoggingProperties properties,
+            List<RequestMetadataMessageFormatter> metadataFormatters,
+            BodyClientRequestFormatter bodyFormatter) {
         this.properties = properties;
         this.metadataFormatters = metadataFormatters;
         this.bodyFormatter = bodyFormatter;
     }
 
-
     @Override
     public Mono<String> createMessage(ClientRequest request) {
-        StringBuilder messageBuilder = new StringBuilder("REQUEST: ")
-                .append(request.method().name())
-                .append(" ")
-                .append(request.url());
+        StringBuilder messageBuilder =
+                new StringBuilder("OUTREQ: ")
+                        .append(request.method().name())
+                        .append(" ")
+                        .append(request.url());
 
         for (RequestMetadataMessageFormatter metadataFormatter : metadataFormatters) {
             messageBuilder.append(metadataFormatter.formatMessage(request, properties));
         }
 
         return bodyFormatter != null
-                ? bodyFormatter.formatMessage(request, properties).map(str -> messageBuilder.append(str).toString())
+                ? bodyFormatter
+                        .formatMessage(request, properties)
+                        .map(str -> messageBuilder.append(str).toString())
                 : Mono.just(messageBuilder.toString());
     }
 }

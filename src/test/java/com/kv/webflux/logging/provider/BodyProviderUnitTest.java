@@ -18,7 +18,6 @@ public class BodyProviderUnitTest extends BaseTest {
 
     private final BodyProvider provider = new BodyProvider();
 
-
     @Test
     void createBodyMessage_whenBodyMonoIsNotEmpty_thenReturnWrapped() {
         String body = RandomString.make();
@@ -78,7 +77,6 @@ public class BodyProviderUnitTest extends BaseTest {
         assertEquals(expectedNoBodyMessage, provider.createBodyMessage(nullBody));
         assertEquals(expectedNoBodyMessage, provider.createBodyMessage(emptyBody));
     }
-
 
     private static String wrapBody(String body) {
         return " BODY: [ " + body + " ]";

@@ -9,7 +9,6 @@ public final class HeaderServerRequestFormatter implements ServerMetadataMessage
 
     private final HeaderProvider provider = new HeaderProvider();
 
-
     @Override
     public String formatMessage(ServerWebExchange exchange, LoggingProperties properties) {
         return provider.createMessage(exchange.getRequest().getHeaders(), properties);

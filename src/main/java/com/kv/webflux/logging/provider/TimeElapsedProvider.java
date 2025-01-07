@@ -3,9 +3,10 @@ package com.kv.webflux.logging.provider;
 public class TimeElapsedProvider {
 
     public String createMessage(long timeElapsedMillis) {
-        String responseTime = timeElapsedMillis < 1000
-                ? timeElapsedMillis + "ms"
-                : toSeconds(timeElapsedMillis) + "s";
+        String responseTime =
+                timeElapsedMillis < 1000
+                        ? timeElapsedMillis + "ms"
+                        : toSeconds(timeElapsedMillis) + "s";
 
         return " ELAPSED TIME: " + responseTime;
     }

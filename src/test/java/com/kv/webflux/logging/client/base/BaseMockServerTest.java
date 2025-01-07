@@ -13,7 +13,6 @@ public abstract class BaseMockServerTest extends BaseComponentTest {
 
     private static WireMockServer mockServer;
 
-
     @BeforeAll
     static void startMockServer() {
         WireMock.configureFor(SERVER_PORT);

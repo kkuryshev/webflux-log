@@ -8,7 +8,6 @@ public class CookieClientRequestFormatter implements RequestMetadataMessageForma
 
     private final CookieProvider provider = new CookieProvider();
 
-
     @Override
     public String formatMessage(ClientRequest request, LoggingProperties properties) {
         return provider.createClientRequestMessage(request.cookies(), properties);

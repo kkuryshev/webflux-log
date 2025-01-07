@@ -16,11 +16,13 @@ public class BodyFormatterUnitTest extends BaseTest {
     private final BodyClientResponseFormatter formatter = new BodyClientResponseFormatter();
 
     private final String bodyStr = RandomString.make();
-    private final ClientResponse response = ClientResponse.create(HttpStatus.BAD_REQUEST).body(bodyStr).build();
+    private final ClientResponse response =
+            ClientResponse.create(HttpStatus.BAD_REQUEST).body(bodyStr).build();
 
-    private final LoggingProperties propertiesWithBody = LoggingProperties.builder().logBody(true).build();
-    private final LoggingProperties propertiesNoBody = LoggingProperties.builder().logBody(false).build();
-
+    private final LoggingProperties propertiesWithBody =
+            LoggingProperties.builder().logBody(true).build();
+    private final LoggingProperties propertiesNoBody =
+            LoggingProperties.builder().logBody(false).build();
 
     @Test
     void addData_whenDontNeedToLog_thenReturnSourceMessage() {
@@ -34,7 +36,8 @@ public class BodyFormatterUnitTest extends BaseTest {
     void addData_whenNoBody_thenAddEmpty() {
         ClientResponse responseWithNoBody = ClientResponse.create(HttpStatus.BAD_REQUEST).build();
 
-        ResponseData result = formatter.formatMessage(responseWithNoBody, propertiesWithBody).block();
+        ResponseData result =
+                formatter.formatMessage(responseWithNoBody, propertiesWithBody).block();
         assertNotNull(result);
         assertTrue(result.getLogMessage().contains("BODY:"));
         assertTrue(result.getLogMessage().contains(LoggingUtils.NO_BODY_MESSAGE));

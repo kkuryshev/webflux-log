@@ -15,13 +15,13 @@ public class CookieServerRequestFormatterUnitTest extends BaseTest {
 
     private final CookieClientRequestFormatter formatter = new CookieClientRequestFormatter();
 
-    private final ClientRequest testRequest = ClientRequest.create(HttpMethod.GET, URI.create("/someUri"))
-            .cookie("Cookie-1", "some-text-one")
-            .cookie("Cookie-1", "some-text-two")
-            .cookie("Some2", "any-contentSecond")
-            .cookie("Session", "session1234")
-            .build();
-
+    private final ClientRequest testRequest =
+            ClientRequest.create(HttpMethod.GET, URI.create("/someUri"))
+                    .cookie("Cookie-1", "some-text-one")
+                    .cookie("Cookie-1", "some-text-two")
+                    .cookie("Some2", "any-contentSecond")
+                    .cookie("Session", "session1234")
+                    .build();
 
     @Test
     void addData_whenDontNeedToLog_thenReturnSourceMessage() {
@@ -43,16 +43,16 @@ public class CookieServerRequestFormatterUnitTest extends BaseTest {
                 () -> assertTrue(withCookies.contains("Cookie-1=some-text-one")),
                 () -> assertTrue(withCookies.contains("Cookie-1=some-text-two")),
                 () -> assertTrue(withCookies.contains("Some2=any-contentSecond")),
-                () -> assertTrue(withCookies.contains("Session=session1234"))
-        );
+                () -> assertTrue(withCookies.contains("Session=session1234")));
     }
 
     @Test
     void addData_whenLogAndMaskCookies_thenReturnWithMaskedCookies() {
-        LoggingProperties properties = LoggingProperties.builder()
-                .logCookies(true)
-                .maskedCookies("Session", "AbsentCookie321")
-                .build();
+        LoggingProperties properties =
+                LoggingProperties.builder()
+                        .logCookies(true)
+                        .maskedCookies("Session", "AbsentCookie321")
+                        .build();
 
         String withCookies = formatter.formatMessage(testRequest, properties);
         assertNotNull(withCookies);
@@ -60,7 +60,6 @@ public class CookieServerRequestFormatterUnitTest extends BaseTest {
                 () -> assertTrue(withCookies.contains("COOKIES:")),
                 () -> assertTrue(withCookies.contains("Some2=any-contentSecond")),
                 () -> assertTrue(withCookies.contains("Session={masked}")),
-                () -> assertFalse(withCookies.contains("AbsentCookie321"))
-        );
+                () -> assertFalse(withCookies.contains("AbsentCookie321")));
     }
 }

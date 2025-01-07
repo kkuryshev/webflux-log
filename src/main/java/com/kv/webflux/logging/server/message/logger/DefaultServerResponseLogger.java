@@ -23,41 +23,50 @@ public final class DefaultServerResponseLogger implements ServerResponseLogger {
     private final HttpStatusProvider statusProvider = new HttpStatusProvider();
     private final TimeElapsedProvider timeProvider = new TimeElapsedProvider();
 
-
-    public DefaultServerResponseLogger(LoggingProperties properties,
-                                       List<ServerMetadataMessageFormatter> messageFormatters) {
+    public DefaultServerResponseLogger(
+            LoggingProperties properties, List<ServerMetadataMessageFormatter> messageFormatters) {
         this.properties = properties;
         this.messageFormatters = messageFormatters;
     }
 
-
     @Override
     public ServerHttpResponse log(ServerWebExchange exchange, long exchangeStartTimeMillis) {
-        Supplier<String> baseMessageSupplier = createMetadataMessage(exchange, exchangeStartTimeMillis);
+        Supplier<String> baseMessageSupplier =
+                createMetadataMessage(exchange, exchangeStartTimeMillis);
 
         if (properties.isLogBody()) {
-            return new LoggingServerHttpResponseDecorator(exchange.getResponse(), baseMessageSupplier);
+            return new LoggingServerHttpResponseDecorator(
+                    exchange.getResponse(), baseMessageSupplier);
 
         } else {
             exchange.getResponse()
-                    .beforeCommit(() -> Mono.fromRunnable(() -> log.info(baseMessageSupplier.get())));
+                    .beforeCommit(
+                            () -> Mono.fromRunnable(() -> log.info(baseMessageSupplier.get())));
             return exchange.getResponse();
         }
     }
 
-
-    private Supplier<String> createMetadataMessage(ServerWebExchange exchange, long exchangeStartTimeMillis) {
+    private Supplier<String> createMetadataMessage(
+            ServerWebExchange exchange, long exchangeStartTimeMillis) {
         return () -> {
-            String status = statusProvider.createMessage(exchange.getResponse().getRawStatusCode());
-            StringBuilder metadata = new StringBuilder(status);
+            final var status = exchange.getResponse().getStatusCode();
+            String statusValue = statusProvider.createMessage(status.value());
+            StringBuilder metadata = new StringBuilder(statusValue);
+
+            String uri =
+                    String.join(
+                            " ",
+                            exchange.getRequest().getMethod().toString(),
+                            exchange.getRequest().getURI().toString());
 
             for (ServerMetadataMessageFormatter formatter : messageFormatters) {
                 metadata.append(formatter.formatMessage(exchange, properties));
             }
 
-            String timeElapsed = timeProvider.createMessage(System.currentTimeMillis() - exchangeStartTimeMillis);
-
-            return "RESPONSE:".concat(timeElapsed).concat(metadata.toString());
+            String timeElapsed =
+                    timeProvider.createMessage(
+                            System.currentTimeMillis() - exchangeStartTimeMillis);
+            return String.join(" ", "INRESP:", uri, timeElapsed, metadata.toString());
         };
     }
 }

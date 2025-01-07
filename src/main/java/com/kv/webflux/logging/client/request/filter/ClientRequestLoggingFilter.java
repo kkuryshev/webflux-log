@@ -14,15 +14,14 @@ public class ClientRequestLoggingFilter implements ExchangeFilterFunction {
     private static final Log log = LogFactory.getLog(ClientRequestLoggingFilter.class);
     private final RequestMessageCreator messageCreator;
 
-
     public ClientRequestLoggingFilter(RequestMessageCreator messageCreator) {
         this.messageCreator = messageCreator;
     }
 
-
     @Override
     public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
-        return messageCreator.createMessage(request)
+        return messageCreator
+                .createMessage(request)
                 .doOnNext(log::info)
                 .then(next.exchange(request));
     }

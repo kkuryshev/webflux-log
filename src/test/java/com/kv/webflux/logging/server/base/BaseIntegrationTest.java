@@ -21,62 +21,54 @@ import org.springframework.web.server.WebFilter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @EnableAutoConfiguration
-@ContextConfiguration(classes = {
-        BaseIntegrationTest.LoggingFilterConfig.class,
-        TestController.class
-})
+@ContextConfiguration(
+        classes = {BaseIntegrationTest.LoggingFilterConfig.class, TestController.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class BaseIntegrationTest extends BaseTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-
     protected WebClient createWebClient() {
-        return WebClient.builder()
-                .baseUrl("http://localhost:8080")
-                .build();
+        return WebClient.builder().baseUrl("http://localhost:8080").build();
     }
 
     protected void verifyTestEndpointRequestSuccess() throws JsonProcessingException {
         TestDto body = new TestDto(RandomString.make(40), RandomString.make());
         String bodyJson = objectMapper.writeValueAsString(body);
 
-        String result = createWebClient().post()
-                .uri("/test/endpoint")
-
-                .header(HttpHeaders.REFERER, RandomString.make())
-                .header(HttpHeaders.AUTHORIZATION, RandomString.make())
-                .header(HttpHeaders.COOKIE, RandomString.make())
-
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.ALL)
-
-                .cookie("Cookie-1", RandomString.make(10))
-                .cookie("Cookie-1", RandomString.make(10))
-                .cookie("Cookie-3", RandomString.make(5))
-
-                .bodyValue(bodyJson)
-
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+        String result =
+                createWebClient()
+                        .post()
+                        .uri("/test/endpoint")
+                        .header(HttpHeaders.REFERER, RandomString.make())
+                        .header(HttpHeaders.AUTHORIZATION, RandomString.make())
+                        .header(HttpHeaders.COOKIE, RandomString.make())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.ALL)
+                        .cookie("Cookie-1", RandomString.make(10))
+                        .cookie("Cookie-1", RandomString.make(10))
+                        .cookie("Cookie-3", RandomString.make(5))
+                        .bodyValue(bodyJson)
+                        .retrieve()
+                        .bodyToMono(String.class)
+                        .block();
 
         assertEquals(bodyJson + TestController.RESPONSE_PREFIX, result);
     }
-
 
     @TestConfiguration
     public static class LoggingFilterConfig {
 
         @Bean
         public WebFilter loggingFilter() {
-            LoggingProperties properties = LoggingProperties.builder()
-                    .logRequestId(true)
-                    .requestIdPrefix("TEST-REQ-ID")
-                    .logHeaders(true)
-                    .logCookies(true)
-                    .logBody(true)
-                    .build();
+            LoggingProperties properties =
+                    LoggingProperties.builder()
+                            .logRequestId(true)
+                            .requestIdPrefix("TEST-REQ-ID")
+                            .logHeaders(true)
+                            .logCookies(true)
+                            .logBody(true)
+                            .build();
 
             return ServerLoggingFilterFactory.defaultFilter(properties, properties);
         }

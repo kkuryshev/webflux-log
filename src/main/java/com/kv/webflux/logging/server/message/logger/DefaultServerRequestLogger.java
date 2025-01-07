@@ -16,29 +16,25 @@ public final class DefaultServerRequestLogger implements ServerRequestLogger {
     private final LoggingProperties properties;
     private final List<ServerMetadataMessageFormatter> messageFormatters;
 
-
-    public DefaultServerRequestLogger(LoggingProperties properties,
-                                      List<ServerMetadataMessageFormatter> messageFormatters) {
+    public DefaultServerRequestLogger(
+            LoggingProperties properties, List<ServerMetadataMessageFormatter> messageFormatters) {
         this.properties = properties;
         this.messageFormatters = messageFormatters;
     }
 
-
     @Override
     public ServerHttpRequest log(ServerWebExchange exchange) {
-        StringBuilder metadata = new StringBuilder("REQUEST: ")
-                .append(exchange.getRequest().getMethodValue())
-                .append(" ")
-                .append(exchange.getRequest().getURI());
+        StringBuilder metadata =
+                new StringBuilder("INREQ: ")
+                        .append(exchange.getRequest().getMethod())
+                        .append(" ")
+                        .append(exchange.getRequest().getURI());
 
         for (ServerMetadataMessageFormatter formatter : messageFormatters) {
             metadata.append(formatter.formatMessage(exchange, properties));
         }
 
-        log.info(metadata.toString());
-
-        return properties.isLogBody()
-                ? new LoggingServerHttpRequestDecorator(exchange.getRequest(), properties)
-                : exchange.getRequest();
+        return new LoggingServerHttpRequestDecorator(
+                exchange.getRequest(), properties, metadata.toString());
     }
 }

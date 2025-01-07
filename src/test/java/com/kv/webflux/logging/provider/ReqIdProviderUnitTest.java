@@ -13,12 +13,13 @@ public class ReqIdProviderUnitTest extends BaseTest {
     private final ReqIdProvider provider = new ReqIdProvider();
 
     private final LoggingProperties propsDontLogReqId = LoggingProperties.builder().build();
-    private final LoggingProperties propsLogReqId = LoggingProperties.builder().logRequestId(true).build();
-    private final LoggingProperties propsLogReqIdWithPrefix = LoggingProperties.builder()
-            .logRequestId(true)
-            .requestIdPrefix(RandomString.make(10))
-            .build();
-
+    private final LoggingProperties propsLogReqId =
+            LoggingProperties.builder().logRequestId(true).build();
+    private final LoggingProperties propsLogReqIdWithPrefix =
+            LoggingProperties.builder()
+                    .logRequestId(true)
+                    .requestIdPrefix(RandomString.make(10))
+                    .build();
 
     @Test
     void createFromLogPrefix_whenDontLogReqId_thenReturnSourceMessage() {
@@ -59,9 +60,10 @@ public class ReqIdProviderUnitTest extends BaseTest {
         String actual = provider.createFromLogPrefix(logPrefix, propsLogReqIdWithPrefix);
         log.info(actual);
 
-        assertEquals(" REQ-ID: [ " + propsLogReqIdWithPrefix.getRequestIdPrefix() + "_" + reqId + " ]", actual);
+        assertEquals(
+                " REQ-ID: [ " + propsLogReqIdWithPrefix.getRequestIdPrefix() + "_" + reqId + " ]",
+                actual);
     }
-
 
     @Test
     void createFromLogId_whenDontLogReqId_thenReturnEmptyStr() {
@@ -88,6 +90,8 @@ public class ReqIdProviderUnitTest extends BaseTest {
         String actual = provider.createFromLogId(logId, propsLogReqIdWithPrefix);
         log.info(actual);
 
-        assertEquals("REQ-ID: [ " + propsLogReqIdWithPrefix.getRequestIdPrefix() + "_" + logId + " ]", actual);
+        assertEquals(
+                "REQ-ID: [ " + propsLogReqIdWithPrefix.getRequestIdPrefix() + "_" + logId + " ]",
+                actual);
     }
 }

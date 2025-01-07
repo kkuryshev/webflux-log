@@ -23,43 +23,47 @@ public class LoggingServerHttpResponseDecorator extends ServerHttpResponseDecora
     private final BodyProvider provider = new BodyProvider();
     private final FastByteArrayOutputStream bodyOutputStream = new FastByteArrayOutputStream();
 
-
-    public LoggingServerHttpResponseDecorator(ServerHttpResponse delegate, Supplier<String> sourceLogMessage) {
+    public LoggingServerHttpResponseDecorator(
+            ServerHttpResponse delegate, Supplier<String> sourceLogMessage) {
         super(delegate);
 
-        delegate.beforeCommit(() -> {
-            String bodyMessage = provider.createBodyMessage(bodyOutputStream);
-            String fullLogMessage = sourceLogMessage.get().concat(bodyMessage);
+        delegate.beforeCommit(
+                () -> {
+                    String bodyMessage = provider.createBodyMessage(bodyOutputStream);
+                    String fullLogMessage = sourceLogMessage.get().concat(bodyMessage);
 
-            log.info(fullLogMessage);
+                    log.info(fullLogMessage);
 
-            return Mono.empty();
-        });
+                    return Mono.empty();
+                });
     }
-
 
     @Override
     public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) {
-        Flux<DataBuffer> bodyBufferWrapper = Flux.from(body)
-                .map(dataBuffer -> copyBodyBuffer(bodyOutputStream, dataBuffer));
+        Flux<DataBuffer> bodyBufferWrapper =
+                Flux.from(body).map(dataBuffer -> copyBodyBuffer(bodyOutputStream, dataBuffer));
 
         return super.writeWith(bodyBufferWrapper);
     }
 
     @Override
     public Mono<Void> writeAndFlushWith(Publisher<? extends Publisher<? extends DataBuffer>> body) {
-        Flux<Flux<DataBuffer>> bodyBufferWrapper = Flux.from(body)
-                .map(publisher -> Flux.from(publisher)
-                        .map(buffer -> copyBodyBuffer(bodyOutputStream, buffer)));
+        Flux<Flux<DataBuffer>> bodyBufferWrapper =
+                Flux.from(body)
+                        .map(
+                                publisher ->
+                                        Flux.from(publisher)
+                                                .map(
+                                                        buffer ->
+                                                                copyBodyBuffer(
+                                                                        bodyOutputStream, buffer)));
 
         return super.writeAndFlushWith(bodyBufferWrapper);
     }
 
-
     private DataBuffer copyBodyBuffer(FastByteArrayOutputStream bodyStream, DataBuffer buffer) {
         try {
-            Channels.newChannel(bodyStream)
-                    .write(buffer.asByteBuffer().asReadOnlyBuffer());
+            Channels.newChannel(bodyStream).write(buffer.asByteBuffer().asReadOnlyBuffer());
 
             return buffer;
 

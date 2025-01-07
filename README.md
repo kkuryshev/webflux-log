@@ -65,6 +65,6 @@ LoggingFilter requestResponseLoggingFilter = ServerLoggingFilterFactory.defaultF
 ```java
 REQUEST: POST http://localhost:8080/test/endpoint REQ-ID: [ 20206022 ] HEADERS: [ accept-encoding=gzip user-agent=ReactorNetty/1.0.13 host=localhost:8080 content-type=application/json accept=application/json content-length=41 Authorization={masked} ]
 REQ-ID: [ 20206022 ] BODY: [ {"value0":"WCh6dSSw","value1":"AI2D7SMs"} ]
-        
+
 RESPONSE: ELAPSED TIME: 61ms STATUS: 200 OK REQ-ID: [ 20206022 ] HEADERS: [ Content-Type=application/json;charset=UTF-8 Content-Length=50 ] COOKIES (Set-Cookie): [ ] BODY: [ {"value0":"WCh6dSSw","value1":"AI2D7SMs"}-RESPONSE ]
 ```

@@ -1,9 +1,9 @@
 package com.kv.webflux.logging.provider;
 
 import com.kv.webflux.logging.client.LoggingUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.util.FastByteArrayOutputStream;
-import org.springframework.util.StringUtils;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.Charset;
@@ -11,9 +11,7 @@ import java.nio.charset.Charset;
 public final class BodyProvider {
 
     public Mono<String> createBodyMessage(Mono<String> bodyMono) {
-        return bodyMono
-                .defaultIfEmpty(LoggingUtils.NO_BODY_MESSAGE)
-                .map(this::createBodyMessage);
+        return bodyMono.defaultIfEmpty(LoggingUtils.NO_BODY_MESSAGE).map(this::createBodyMessage);
     }
 
     public String createBodyMessage(FastByteArrayOutputStream bodyOutputStream) {
@@ -25,7 +23,7 @@ public final class BodyProvider {
     }
 
     public String createBodyMessage(String body) {
-        return StringUtils.hasLength(body) ? create(body) : createNoBodyMessage();
+        return StringUtils.isNotBlank(body) ? create(body) : createNoBodyMessage();
     }
 
     public String createNoBodyMessage() {
@@ -33,6 +31,7 @@ public final class BodyProvider {
     }
 
     private String create(String body) {
-        return " BODY: [ ".concat(body).concat(" ]");
+        final var truncateBody = body.length() > 100 ? StringUtils.left(body, 100) + "..." : body;
+        return " BODY: [ ".concat(truncateBody).concat(" ]");
     }
 }

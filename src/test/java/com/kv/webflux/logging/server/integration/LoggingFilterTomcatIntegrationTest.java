@@ -9,7 +9,8 @@ import org.springframework.boot.web.embedded.tomcat.TomcatReactiveWebServerFacto
 import org.springframework.boot.web.reactive.server.ReactiveWebServerFactory;
 import org.springframework.context.annotation.Bean;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
         classes = LoggingFilterTomcatIntegrationTest.TomcatConfig.class)
 public class LoggingFilterTomcatIntegrationTest extends BaseIntegrationTest {
 
@@ -17,7 +18,6 @@ public class LoggingFilterTomcatIntegrationTest extends BaseIntegrationTest {
     void logRequestResponse_usingTomcat() throws JsonProcessingException {
         verifyTestEndpointRequestSuccess();
     }
-
 
     @TestConfiguration
     public static class TomcatConfig {

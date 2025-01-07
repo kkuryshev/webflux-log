@@ -20,10 +20,10 @@ public class BodyFormatterUnitTest extends BaseTest {
 
     private final String bodyStr = RandomString.make();
 
-    private final ClientRequest requestWithBody = ClientRequest.create(HttpMethod.POST, URI.create("/someUri"))
-            .body(Mono.just(bodyStr), String.class)
-            .build();
-
+    private final ClientRequest requestWithBody =
+            ClientRequest.create(HttpMethod.POST, URI.create("/someUri"))
+                    .body(Mono.just(bodyStr), String.class)
+                    .build();
 
     @Test
     void addData_whenDontNeedToLog_thenReturnSourceMessage() {
@@ -37,7 +37,8 @@ public class BodyFormatterUnitTest extends BaseTest {
     @Test
     void addData_whenNoBody_thenAddEmpty() {
         LoggingProperties properties = LoggingProperties.builder().logBody(true).build();
-        ClientRequest requestNoBody = ClientRequest.create(HttpMethod.POST, URI.create("/someUri")).build();
+        ClientRequest requestNoBody =
+                ClientRequest.create(HttpMethod.POST, URI.create("/someUri")).build();
 
         String result = formatter.formatMessage(requestNoBody, properties).block();
         assertNotNull(result);

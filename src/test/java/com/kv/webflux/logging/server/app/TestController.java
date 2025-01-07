@@ -15,16 +15,14 @@ public class TestController {
     public static final String TEST_ENDPOINT = "/test/endpoint";
     public static final String RESPONSE_PREFIX = "-RESPONSE";
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
+    @Autowired private ObjectMapper objectMapper;
 
     @PostMapping(TEST_ENDPOINT)
     public Mono<String> testEndpoint(@RequestBody Mono<TestDto> requestBody) {
-        return requestBody.doOnNext(Assertions::assertNotNull)
+        return requestBody
+                .doOnNext(Assertions::assertNotNull)
                 .map(body -> toJson(body) + RESPONSE_PREFIX);
     }
-
 
     private String toJson(TestDto testDto) {
         try {

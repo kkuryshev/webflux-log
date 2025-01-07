@@ -9,7 +9,8 @@ import org.springframework.boot.web.embedded.jetty.JettyReactiveWebServerFactory
 import org.springframework.boot.web.reactive.server.ReactiveWebServerFactory;
 import org.springframework.context.annotation.Bean;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
         classes = LoggingFilterJettyIntegrationTest.JettyConfig.class)
 public class LoggingFilterJettyIntegrationTest extends BaseIntegrationTest {
 
@@ -17,7 +18,6 @@ public class LoggingFilterJettyIntegrationTest extends BaseIntegrationTest {
     void logRequestResponse_usingJetty() throws JsonProcessingException {
         verifyTestEndpointRequestSuccess();
     }
-
 
     @TestConfiguration
     public static class JettyConfig {

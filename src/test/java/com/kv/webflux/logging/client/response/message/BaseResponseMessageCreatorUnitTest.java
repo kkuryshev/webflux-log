@@ -28,53 +28,57 @@ public class BaseResponseMessageCreatorUnitTest extends BaseTest {
 
     private ResponseMessageCreator responseMessageCreator;
 
-    @Spy
-    private ReqIdClientResponseFormatter reqIdClientResponseFormatter;
+    @Spy private ReqIdClientResponseFormatter reqIdClientResponseFormatter;
 
-    @Spy
-    private HeaderClientResponseFormatter headerClientResponseFormatter;
+    @Spy private HeaderClientResponseFormatter headerClientResponseFormatter;
 
-    @Spy
-    private CookieClientResponseFormatter cookieClientResponseFormatter;
+    @Spy private CookieClientResponseFormatter cookieClientResponseFormatter;
 
-    private final LoggingProperties properties = LoggingProperties.builder()
-            .logHeaders(true)
-            .logCookies(true)
-            .logRequestId(true)
-            .build();
-
+    private final LoggingProperties properties =
+            LoggingProperties.builder()
+                    .logHeaders(true)
+                    .logCookies(true)
+                    .logRequestId(true)
+                    .build();
 
     @BeforeEach
     void setUp() {
-        responseMessageCreator = new BaseResponseMessageCreator(
-                properties,
-                List.of(reqIdClientResponseFormatter, headerClientResponseFormatter, cookieClientResponseFormatter),
-                new BodyClientResponseFormatter()
-        );
+        responseMessageCreator =
+                new BaseResponseMessageCreator(
+                        properties,
+                        List.of(
+                                reqIdClientResponseFormatter,
+                                headerClientResponseFormatter,
+                                cookieClientResponseFormatter),
+                        new BodyClientResponseFormatter());
     }
-
 
     @Test
     void formatMessage_usingInjectedFormatters() {
-        ClientResponse testResponse = ClientResponse.create(HttpStatus.OK)
-                .header(HttpHeaders.AUTHORIZATION, "Some Auth")
-                .cookie("Session", "sid4567")
-                .build();
+        ClientResponse testResponse =
+                ClientResponse.create(HttpStatus.OK)
+                        .header(HttpHeaders.AUTHORIZATION, "Some Auth")
+                        .cookie("Session", "sid4567")
+                        .build();
 
         long exchangeElapsedTimeMillis = new Random().nextInt(999);
 
-        ResponseData result = responseMessageCreator.formatMessage(exchangeElapsedTimeMillis, testResponse).block();
+        ResponseData result =
+                responseMessageCreator
+                        .formatMessage(exchangeElapsedTimeMillis, testResponse)
+                        .block();
 
         assertNotNull(result);
         assertNotNull(result.getResponse());
 
         String actualLogMessage = result.getLogMessage();
 
-        assertTrue(actualLogMessage.contains("RESPONSE:"));
+        assertTrue(actualLogMessage.contains("OUTRESP:"));
         assertTrue(actualLogMessage.contains("ELAPSED TIME:"));
         assertTrue(actualLogMessage.contains(String.valueOf(exchangeElapsedTimeMillis)));
 
-        assertTrue(actualLogMessage.contains(TestUtils.formatToLoggedReqId(testResponse.logPrefix())));
+        assertTrue(
+                actualLogMessage.contains(TestUtils.formatToLoggedReqId(testResponse.logPrefix())));
         assertTrue(actualLogMessage.contains(HttpHeaders.AUTHORIZATION + "=Some Auth"));
         assertTrue(actualLogMessage.contains("Session=sid4567"));
 

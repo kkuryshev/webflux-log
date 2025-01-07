@@ -13,11 +13,14 @@ public final class LoggingProperties {
 
     private final boolean logBody;
 
-
-    private LoggingProperties(final boolean logHeaders, final String[] maskedHeaders,
-                              final boolean logCookies, final String[] maskedCookies,
-                              final boolean logBody,
-                              final boolean logRequestId, final String requestIdPrefix) {
+    private LoggingProperties(
+            final boolean logHeaders,
+            final String[] maskedHeaders,
+            final boolean logCookies,
+            final String[] maskedCookies,
+            final boolean logBody,
+            final boolean logRequestId,
+            final String requestIdPrefix) {
 
         this.logHeaders = logHeaders;
         this.maskedHeaders = maskedHeaders;
@@ -28,11 +31,9 @@ public final class LoggingProperties {
         this.requestIdPrefix = requestIdPrefix;
     }
 
-
     public static LoggingProperties.LoggingPropertiesBuilder builder() {
         return new LoggingProperties.LoggingPropertiesBuilder();
     }
-
 
     public boolean isLogRequestId() {
         return this.logRequestId;
@@ -62,7 +63,6 @@ public final class LoggingProperties {
         return this.logBody;
     }
 
-
     public static class LoggingPropertiesBuilder {
 
         private boolean logRequestId;
@@ -76,17 +76,15 @@ public final class LoggingProperties {
 
         private boolean logBody;
 
-
-        private LoggingPropertiesBuilder() {
-        }
-
+        private LoggingPropertiesBuilder() {}
 
         public LoggingProperties.LoggingPropertiesBuilder logHeaders(final boolean logHeaders) {
             this.logHeaders = logHeaders;
             return this;
         }
 
-        public LoggingProperties.LoggingPropertiesBuilder maskedHeaders(final String... maskedHeaders) {
+        public LoggingProperties.LoggingPropertiesBuilder maskedHeaders(
+                final String... maskedHeaders) {
             this.maskedHeaders = maskedHeaders;
             return this;
         }
@@ -96,7 +94,8 @@ public final class LoggingProperties {
             return this;
         }
 
-        public LoggingProperties.LoggingPropertiesBuilder maskedCookies(final String... maskedCookies) {
+        public LoggingProperties.LoggingPropertiesBuilder maskedCookies(
+                final String... maskedCookies) {
             this.maskedCookies = maskedCookies;
             return this;
         }
@@ -111,14 +110,21 @@ public final class LoggingProperties {
             return this;
         }
 
-        public LoggingProperties.LoggingPropertiesBuilder requestIdPrefix(final String requestIdPrefix) {
+        public LoggingProperties.LoggingPropertiesBuilder requestIdPrefix(
+                final String requestIdPrefix) {
             this.requestIdPrefix = requestIdPrefix;
             return this;
         }
 
         public LoggingProperties build() {
-            return new LoggingProperties(this.logHeaders, this.maskedHeaders, this.logCookies, this.maskedCookies,
-                    this.logBody, this.logRequestId, this.requestIdPrefix);
+            return new LoggingProperties(
+                    this.logHeaders,
+                    this.maskedHeaders,
+                    this.logCookies,
+                    this.maskedCookies,
+                    this.logBody,
+                    this.logRequestId,
+                    this.requestIdPrefix);
         }
     }
 }

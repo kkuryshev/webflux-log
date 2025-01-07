@@ -11,7 +11,8 @@ import java.util.Map;
 
 public final class HeaderProvider {
 
-    public String createMessage(MultiValueMap<String, String> headers, LoggingProperties properties) {
+    public String createMessage(
+            MultiValueMap<String, String> headers, LoggingProperties properties) {
         if (!properties.isLogHeaders()) {
             return LoggingUtils.EMPTY_MESSAGE;
         }
@@ -32,18 +33,24 @@ public final class HeaderProvider {
         return sb.append("]").toString();
     }
 
-
     private void removeCookieHeaders(LinkedCaseInsensitiveMap<List<String>> headers) {
         headers.remove(HttpHeaders.SET_COOKIE);
         headers.remove(HttpHeaders.COOKIE);
     }
 
     private void extractAll(Map<String, List<String>> headers, StringBuilder sb) {
-        headers.forEach((headerName, headerValues) -> headerValues
-                .forEach(value -> sb.append(headerName).append("=").append(value).append(" ")));
+        headers.forEach(
+                (headerName, headerValues) ->
+                        headerValues.forEach(
+                                value ->
+                                        sb.append(headerName)
+                                                .append("=")
+                                                .append(value)
+                                                .append(" ")));
     }
 
-    private Map<String, List<String>> setMask(LinkedCaseInsensitiveMap<List<String>> headers, String[] headerNames) {
+    private Map<String, List<String>> setMask(
+            LinkedCaseInsensitiveMap<List<String>> headers, String[] headerNames) {
         return ProviderUtils.setMaskToValues(headers, headerNames, LoggingUtils.DEFAULT_MASK);
     }
 }

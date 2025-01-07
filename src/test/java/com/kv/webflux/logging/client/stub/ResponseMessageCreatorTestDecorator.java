@@ -21,10 +21,10 @@ public class ResponseMessageCreatorTestDecorator implements ResponseMessageCreat
 
     private String bodyInLogMessage = LoggingUtils.NO_BODY_MESSAGE;
 
-
-    public ResponseMessageCreatorTestDecorator(ResponseMessageCreator sourceMessageCreator,
-                                               LoggingProperties sourceLoggingProperties,
-                                               String bodyInLogMessage) {
+    public ResponseMessageCreatorTestDecorator(
+            ResponseMessageCreator sourceMessageCreator,
+            LoggingProperties sourceLoggingProperties,
+            String bodyInLogMessage) {
 
         this.responseMessageCreator = sourceMessageCreator;
         this.loggingProperties = sourceLoggingProperties;
@@ -36,73 +36,104 @@ public class ResponseMessageCreatorTestDecorator implements ResponseMessageCreat
 
     @Override
     public Mono<ResponseData> formatMessage(Long responseTimeMillis, ClientResponse response) {
-        return responseMessageCreator.formatMessage(responseTimeMillis, response)
-                .doOnNext(resData -> {
-                    assertTrue(resData.getLogMessage().contains(String.valueOf(responseTimeMillis)));
+        return responseMessageCreator
+                .formatMessage(responseTimeMillis, response)
+                .doOnNext(
+                        resData -> {
+                            assertTrue(
+                                    resData.getLogMessage()
+                                            .contains(String.valueOf(responseTimeMillis)));
 
-                    if (loggingProperties.isLogRequestId()) {
-                        assertWithReqId(resData.getLogMessage(), response, loggingProperties);
-                    }
+                            if (loggingProperties.isLogRequestId()) {
+                                assertWithReqId(
+                                        resData.getLogMessage(), response, loggingProperties);
+                            }
 
-                    if (loggingProperties.isLogHeaders()) {
-                        assertWithHeaders(loggingProperties.getMaskedHeaders(), resData.getLogMessage(), response);
-                    }
+                            if (loggingProperties.isLogHeaders()) {
+                                assertWithHeaders(
+                                        loggingProperties.getMaskedHeaders(),
+                                        resData.getLogMessage(),
+                                        response);
+                            }
 
-                    if (loggingProperties.isLogCookies()) {
-                        assertWithCookies(loggingProperties.getMaskedCookies(), resData.getLogMessage(), response);
-                    }
+                            if (loggingProperties.isLogCookies()) {
+                                assertWithCookies(
+                                        loggingProperties.getMaskedCookies(),
+                                        resData.getLogMessage(),
+                                        response);
+                            }
 
-                    if (loggingProperties.isLogBody()) {
-                        assertWithBody(resData.getLogMessage());
-                    }
-                });
+                            if (loggingProperties.isLogBody()) {
+                                assertWithBody(resData.getLogMessage());
+                            }
+                        });
     }
 
-
-    private void assertWithReqId(String message, ClientResponse response, LoggingProperties loggingProps) {
+    private void assertWithReqId(
+            String message, ClientResponse response, LoggingProperties loggingProps) {
         if (loggingProps.getRequestIdPrefix() == null) {
             assertTrue(message.contains(formatToLoggedReqId(response.logPrefix())));
         } else {
-            assertTrue(message.contains(formatToLoggedReqId(response.logPrefix(), loggingProps.getRequestIdPrefix())));
+            assertTrue(
+                    message.contains(
+                            formatToLoggedReqId(
+                                    response.logPrefix(), loggingProps.getRequestIdPrefix())));
         }
     }
 
-    private void assertWithHeaders(String[] maskedHeaders, String message, ClientResponse response) {
+    private void assertWithHeaders(
+            String[] maskedHeaders, String message, ClientResponse response) {
         response.headers()
                 .asHttpHeaders()
-                .forEach((name, values) -> {
+                .forEach(
+                        (name, values) -> {
+                            if (!name.equals("Set-Cookie")) {
+                                assertTrue(message.contains(name));
 
-                    if (!name.equals("Set-Cookie")) {
-                        assertTrue(message.contains(name));
-
-                        values.forEach(value -> {
-                            if (maskedHeaders != null && Arrays.asList(maskedHeaders).contains(name)) {
-                                assertFalse(message.contains(value));
-                                assertTrue(message.contains(name + "=" + LoggingUtils.DEFAULT_MASK));
-                            } else {
-                                assertTrue(message.contains(value));
+                                values.forEach(
+                                        value -> {
+                                            if (maskedHeaders != null
+                                                    && Arrays.asList(maskedHeaders)
+                                                            .contains(name)) {
+                                                assertFalse(message.contains(value));
+                                                assertTrue(
+                                                        message.contains(
+                                                                name
+                                                                        + "="
+                                                                        + LoggingUtils
+                                                                                .DEFAULT_MASK));
+                                            } else {
+                                                assertTrue(message.contains(value));
+                                            }
+                                        });
                             }
                         });
-                    }
-                });
     }
 
-    private void assertWithCookies(String[] maskedCookies, String message, ClientResponse response) {
+    private void assertWithCookies(
+            String[] maskedCookies, String message, ClientResponse response) {
         response.cookies()
-                .forEach((name, values) -> {
-                    assertTrue(message.contains(name));
+                .forEach(
+                        (name, values) -> {
+                            assertTrue(message.contains(name));
 
-                    values.forEach(resCookie -> {
-                        String value = resCookie.toString();
+                            values.forEach(
+                                    resCookie -> {
+                                        String value = resCookie.toString();
 
-                        if (maskedCookies != null && Arrays.asList(maskedCookies).contains(name)) {
-                            assertFalse(message.contains(value));
-                            assertTrue(message.contains(name + "=" + LoggingUtils.DEFAULT_MASK));
-                        } else {
-                            assertTrue(message.contains(value));
-                        }
-                    });
-                });
+                                        if (maskedCookies != null
+                                                && Arrays.asList(maskedCookies).contains(name)) {
+                                            assertFalse(message.contains(value));
+                                            assertTrue(
+                                                    message.contains(
+                                                            name
+                                                                    + "="
+                                                                    + LoggingUtils.DEFAULT_MASK));
+                                        } else {
+                                            assertTrue(message.contains(value));
+                                        }
+                                    });
+                        });
     }
 
     private void assertWithBody(String message) {

@@ -8,7 +8,6 @@ public final class ReqIdServerFormatter implements ServerMetadataMessageFormatte
 
     private final ReqIdProvider provider = new ReqIdProvider();
 
-
     @Override
     public String formatMessage(ServerWebExchange exchange, LoggingProperties properties) {
         return provider.createFromLogPrefix(exchange.getLogPrefix(), properties);

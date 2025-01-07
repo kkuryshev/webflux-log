@@ -19,7 +19,6 @@ public final class RequestBodyExtractor {
 
     private final RequestBodyMapper bodyMapper = new RequestBodyMapper();
 
-
     public Mono<String> extractBody(@NonNull ClientRequest request) {
         BodyInserter<?, ? super ClientHttpRequest> inserter = request.body();
 
@@ -32,8 +31,8 @@ public final class RequestBodyExtractor {
         return bodyMapper.mapToString(bodyValue, bodyType);
     }
 
-
-    private Object getInserterFieldValue(BodyInserter<?, ? super ClientHttpRequest> inserter, String fieldName) {
+    private Object getInserterFieldValue(
+            BodyInserter<?, ? super ClientHttpRequest> inserter, String fieldName) {
         Field inserterField;
         try {
             inserterField = inserter.getClass().getDeclaredField(fieldName);

@@ -12,28 +12,32 @@ import java.util.Map;
 
 public final class CookieProvider {
 
-
-    public String createClientRequestMessage(MultiValueMap<String, String> cookies, LoggingProperties properties) {
+    public String createClientRequestMessage(
+            MultiValueMap<String, String> cookies, LoggingProperties properties) {
         if (!properties.isLogCookies()) {
             return LoggingUtils.EMPTY_MESSAGE;
         }
 
         return properties.getMaskedCookies() == null
                 ? extractInClientRequest(cookies)
-                : extractInClientRequest(setMaskInClientRequest(cookies, properties.getMaskedCookies()));
+                : extractInClientRequest(
+                        setMaskInClientRequest(cookies, properties.getMaskedCookies()));
     }
 
-    public String createServerRequestMessage(MultiValueMap<String, HttpCookie> cookies, LoggingProperties properties) {
+    public String createServerRequestMessage(
+            MultiValueMap<String, HttpCookie> cookies, LoggingProperties properties) {
         if (!properties.isLogCookies()) {
             return LoggingUtils.EMPTY_MESSAGE;
         }
 
         return properties.getMaskedCookies() == null
                 ? extractInServerRequest(cookies)
-                : extractInServerRequest(setMaskInServerRequest(cookies, properties.getMaskedCookies()));
+                : extractInServerRequest(
+                        setMaskInServerRequest(cookies, properties.getMaskedCookies()));
     }
 
-    public String createResponseMessage(MultiValueMap<String, ResponseCookie> cookies, LoggingProperties properties) {
+    public String createResponseMessage(
+            MultiValueMap<String, ResponseCookie> cookies, LoggingProperties properties) {
         if (!properties.isLogCookies()) {
             return LoggingUtils.EMPTY_MESSAGE;
         }
@@ -43,29 +47,30 @@ public final class CookieProvider {
                 : extractInResponse(setMaskInResponse(cookies, properties.getMaskedCookies()));
     }
 
-
-    private Map<String, List<String>> setMaskInClientRequest(Map<String, List<String>> cookies,
-                                                             String[] cookiesToMask) {
+    private Map<String, List<String>> setMaskInClientRequest(
+            Map<String, List<String>> cookies, String[] cookiesToMask) {
         return ProviderUtils.setMaskToValues(cookies, cookiesToMask, LoggingUtils.DEFAULT_MASK);
     }
 
-    private Map<String, List<HttpCookie>> setMaskInServerRequest(Map<String, List<HttpCookie>> cookies,
-                                                                 String[] cookiesToMask) {
+    private Map<String, List<HttpCookie>> setMaskInServerRequest(
+            Map<String, List<HttpCookie>> cookies, String[] cookiesToMask) {
 
         LinkedCaseInsensitiveMap<List<HttpCookie>> cookiesToLog = toCaseInsensitive(cookies);
         for (String name : cookiesToMask) {
-            ProviderUtils.setMaskToValue(cookiesToLog, name, new HttpCookie(name, LoggingUtils.DEFAULT_MASK));
+            ProviderUtils.setMaskToValue(
+                    cookiesToLog, name, new HttpCookie(name, LoggingUtils.DEFAULT_MASK));
         }
 
         return cookiesToLog;
     }
 
-    private Map<String, List<ResponseCookie>> setMaskInResponse(MultiValueMap<String, ResponseCookie> cookies,
-                                                                String[] cookiesToMask) {
+    private Map<String, List<ResponseCookie>> setMaskInResponse(
+            MultiValueMap<String, ResponseCookie> cookies, String[] cookiesToMask) {
 
         LinkedCaseInsensitiveMap<List<ResponseCookie>> cookiesToLog = toCaseInsensitive(cookies);
         for (String maskedName : cookiesToMask) {
-            ResponseCookie mask = ResponseCookie.from(maskedName, LoggingUtils.DEFAULT_MASK).build();
+            ResponseCookie mask =
+                    ResponseCookie.from(maskedName, LoggingUtils.DEFAULT_MASK).build();
             ProviderUtils.setMaskToValue(cookiesToLog, maskedName, mask);
         }
 
@@ -75,8 +80,10 @@ public final class CookieProvider {
     private String extractInClientRequest(Map<String, List<String>> cookies) {
         StringBuilder sb = new StringBuilder(" COOKIES: [ ");
 
-        cookies.forEach((name, values) -> values
-                .forEach(value -> sb.append(name).append("=").append(value).append(" ")));
+        cookies.forEach(
+                (name, values) ->
+                        values.forEach(
+                                value -> sb.append(name).append("=").append(value).append(" ")));
 
         return sb.append("]").toString();
     }
@@ -84,8 +91,8 @@ public final class CookieProvider {
     private String extractInServerRequest(Map<String, List<HttpCookie>> cookies) {
         StringBuilder sb = new StringBuilder(" COOKIES: [ ");
 
-        cookies.forEach((name, values) -> values
-                .forEach(httpCookie -> sb.append(httpCookie).append(" ")));
+        cookies.forEach(
+                (name, values) -> values.forEach(httpCookie -> sb.append(httpCookie).append(" ")));
 
         return sb.append("]").toString();
     }
@@ -93,8 +100,14 @@ public final class CookieProvider {
     private String extractInResponse(Map<String, List<ResponseCookie>> cookies) {
         StringBuilder sb = new StringBuilder(" COOKIES (Set-Cookie): [ ");
 
-        cookies.forEach((name, values) -> values
-                .forEach(responseCookie -> sb.append(" [").append(responseCookie).append("]").append(" ")));
+        cookies.forEach(
+                (name, values) ->
+                        values.forEach(
+                                responseCookie ->
+                                        sb.append(" [")
+                                                .append(responseCookie)
+                                                .append("]")
+                                                .append(" ")));
 
         return sb.append("]").toString();
     }

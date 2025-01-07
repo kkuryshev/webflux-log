@@ -22,7 +22,6 @@ public class RequestBodyMapperUnitTest extends BaseTest {
 
     private final RequestBodyMapper bodyMapper = new RequestBodyMapper();
 
-
     @ParameterizedTest
     @MethodSource("getStringBodyValuesAndTypes")
     void mapToString_whenStringBody_thenReturnBodyString(Object bodyValue, Object bodyType) {
@@ -39,31 +38,25 @@ public class RequestBodyMapperUnitTest extends BaseTest {
 
     @Test
     void mapToString_whenBodyExistsButNotSupportedType_thenReturnEmpty() {
-        Mono<String> result = bodyMapper.mapToString(new byte[]{2, 2, 8}, null);
+        Mono<String> result = bodyMapper.mapToString(new byte[] {2, 2, 8}, null);
         assertNull(result.block());
     }
-
 
     private static Stream<Arguments> getStringBodyValuesAndTypes() {
         return Stream.of(
                 Arguments.of(BODY_CONTENT_STR, null),
                 Arguments.of(Mono.just(BODY_CONTENT_STR), null),
-                Arguments.of(Mono.defer(() -> Mono.just(BODY_CONTENT_STR)), null)
-        );
+                Arguments.of(Mono.defer(() -> Mono.just(BODY_CONTENT_STR)), null));
     }
 
     private static Stream<Arguments> getObjectBodyValuesAndTypes() {
         return Stream.of(
                 Arguments.of(BODY_CONTENT_OBJ, TestDto.class),
-                Arguments.of(BODY_CONTENT_OBJ, new ParameterizedTypeReference<TestDto>() {
-                }),
-
+                Arguments.of(BODY_CONTENT_OBJ, new ParameterizedTypeReference<TestDto>() {}),
                 Arguments.of(Mono.just(BODY_CONTENT_OBJ), TestDto.class),
-                Arguments.of(Mono.just(BODY_CONTENT_OBJ), new ParameterizedTypeReference<TestDto>() {
-                })
-        );
+                Arguments.of(
+                        Mono.just(BODY_CONTENT_OBJ), new ParameterizedTypeReference<TestDto>() {}));
     }
-
 
     private static TestDto generateTestDto() {
         TestDto testDto = new TestDto();

@@ -15,7 +15,6 @@ public abstract class BaseTest {
 
     protected static Log log;
 
-
     @BeforeAll
     static void setUpLogger(TestInfo testInfo) {
         Optional<Class<?>> testClass = testInfo.getTestClass();

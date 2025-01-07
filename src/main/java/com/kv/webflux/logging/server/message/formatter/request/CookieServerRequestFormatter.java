@@ -9,7 +9,6 @@ public final class CookieServerRequestFormatter implements ServerMetadataMessage
 
     private final CookieProvider provider = new CookieProvider();
 
-
     @Override
     public String formatMessage(ServerWebExchange exchange, LoggingProperties properties) {
         return provider.createServerRequestMessage(exchange.getRequest().getCookies(), properties);

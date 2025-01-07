@@ -12,7 +12,6 @@ public class BodyClientRequestFormatter {
     private final RequestBodyExtractor bodyExtractor = new RequestBodyExtractor();
     private final BodyProvider bodyProvider = new BodyProvider();
 
-
     public Mono<String> formatMessage(ClientRequest request, LoggingProperties properties) {
         return properties.isLogBody()
                 ? bodyProvider.createBodyMessage(bodyExtractor.extractBody(request))

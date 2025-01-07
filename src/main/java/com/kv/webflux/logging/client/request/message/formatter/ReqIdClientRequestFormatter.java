@@ -8,7 +8,6 @@ public class ReqIdClientRequestFormatter implements RequestMetadataMessageFormat
 
     private final ReqIdProvider provider = new ReqIdProvider();
 
-
     @Override
     public String formatMessage(ClientRequest request, LoggingProperties properties) {
         return provider.createFromLogPrefix(request.logPrefix(), properties);

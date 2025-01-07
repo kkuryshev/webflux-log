@@ -26,41 +26,38 @@ public class BaseRequestMessageCreatorUnitTest extends BaseTest {
 
     private RequestMessageCreator requestMessageCreator;
 
-    @Spy
-    private ReqIdClientRequestFormatter reqIdFormatter;
+    @Spy private ReqIdClientRequestFormatter reqIdFormatter;
 
-    @Spy
-    private HeaderClientRequestFormatter headerFormatter;
+    @Spy private HeaderClientRequestFormatter headerFormatter;
 
-    @Spy
-    private CookieClientRequestFormatter cookieFormatter;
+    @Spy private CookieClientRequestFormatter cookieFormatter;
 
-
-    private final LoggingProperties properties = LoggingProperties.builder()
-            .logHeaders(true)
-            .logCookies(true)
-            .logRequestId(true)
-            .build();
-
+    private final LoggingProperties properties =
+            LoggingProperties.builder()
+                    .logHeaders(true)
+                    .logCookies(true)
+                    .logRequestId(true)
+                    .build();
 
     @BeforeEach
     void setUp() {
-        requestMessageCreator = new BaseRequestMessageCreator(properties,
-                List.of(reqIdFormatter, headerFormatter, cookieFormatter));
+        requestMessageCreator =
+                new BaseRequestMessageCreator(
+                        properties, List.of(reqIdFormatter, headerFormatter, cookieFormatter));
     }
-
 
     @Test
     void formatMessage_usingInjectedFormatters() {
-        ClientRequest testRequest = ClientRequest.create(HttpMethod.GET, URI.create("/someUri"))
-                .header(HttpHeaders.AUTHORIZATION, "Some Auth")
-                .cookie("Session", "sid4567")
-                .build();
+        ClientRequest testRequest =
+                ClientRequest.create(HttpMethod.GET, URI.create("/someUri"))
+                        .header(HttpHeaders.AUTHORIZATION, "Some Auth")
+                        .cookie("Session", "sid4567")
+                        .build();
 
         String result = requestMessageCreator.createMessage(testRequest).block();
 
         assertNotNull(result);
-        assertTrue(result.contains("REQUEST:"));
+        assertTrue(result.contains("OUTREQ:"));
         assertTrue(result.contains(testRequest.method().name()));
         assertTrue(result.contains(testRequest.url().toString()));
 

@@ -16,29 +16,28 @@ import java.util.List;
 
 public class ServerLoggingFilterFactory {
 
-    public static LoggingFilter defaultFilter(LoggingProperties requestProperties,
-                                              LoggingProperties responseProperties) {
+    public static LoggingFilter defaultFilter(
+            LoggingProperties requestProperties, LoggingProperties responseProperties) {
 
-        List<ServerMetadataMessageFormatter> requestFormatters = List.of(
-                new ReqIdServerFormatter(),
-                new HeaderServerRequestFormatter(),
-                new CookieServerRequestFormatter()
-        );
+        List<ServerMetadataMessageFormatter> requestFormatters =
+                List.of(
+                        new ReqIdServerFormatter(),
+                        new HeaderServerRequestFormatter(),
+                        new CookieServerRequestFormatter());
 
-        List<ServerMetadataMessageFormatter> responseFormatters = List.of(
-                new ReqIdServerFormatter(),
-                new HeaderServerResponseFormatter(),
-                new CookieServerResponseFormatter()
-        );
+        List<ServerMetadataMessageFormatter> responseFormatters =
+                List.of(
+                        new ReqIdServerFormatter(),
+                        new HeaderServerResponseFormatter(),
+                        new CookieServerResponseFormatter());
 
         return new LoggingFilter(
                 new DefaultServerRequestLogger(requestProperties, requestFormatters),
-                new DefaultServerResponseLogger(responseProperties, responseFormatters)
-        );
+                new DefaultServerResponseLogger(responseProperties, responseFormatters));
     }
 
-    public static LoggingFilter customFilter(ServerRequestLogger serverRequestLogger,
-                                             ServerResponseLogger serverResponseLogger) {
+    public static LoggingFilter customFilter(
+            ServerRequestLogger serverRequestLogger, ServerResponseLogger serverResponseLogger) {
         return new LoggingFilter(serverRequestLogger, serverResponseLogger);
     }
 }

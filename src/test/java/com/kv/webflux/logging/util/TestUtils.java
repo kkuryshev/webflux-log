@@ -6,7 +6,6 @@ public class TestUtils {
 
     private static final Random random = new Random();
 
-
     public static String formatToLoggedReqId(String logPrefix, String customReqIdPrefix) {
         return customReqIdPrefix + "_" + formatToLoggedReqId(logPrefix);
     }

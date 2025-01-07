@@ -15,18 +15,21 @@ public class ClientResponseLoggingFilter implements ExchangeFilterFunction {
     private static final Log log = LogFactory.getLog(ClientResponseLoggingFilter.class);
     private final ResponseMessageCreator messageCreator;
 
-
     public ClientResponseLoggingFilter(ResponseMessageCreator messageCreator) {
         this.messageCreator = messageCreator;
     }
-
 
     @Override
     public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
         return next.exchange(request)
                 .elapsed()
-                .flatMap(tuple -> messageCreator.formatMessage(tuple.getT1(), tuple.getT2())
-                        .doOnNext(responseData -> log.info(responseData.getLogMessage()))
-                        .map(ResponseData::getResponse));
+                .flatMap(
+                        tuple ->
+                                messageCreator
+                                        .formatMessage(tuple.getT1(), tuple.getT2())
+                                        .doOnNext(
+                                                responseData ->
+                                                        log.info(responseData.getLogMessage()))
+                                        .map(ResponseData::getResponse));
     }
 }

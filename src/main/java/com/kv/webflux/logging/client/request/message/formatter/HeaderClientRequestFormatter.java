@@ -8,7 +8,6 @@ public class HeaderClientRequestFormatter implements RequestMetadataMessageForma
 
     private final HeaderProvider provider = new HeaderProvider();
 
-
     @Override
     public String formatMessage(ClientRequest request, LoggingProperties properties) {
         return provider.createMessage(request.headers(), properties);

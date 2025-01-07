@@ -18,7 +18,6 @@ class RequestBodyMapper {
         return Mono.empty();
     }
 
-
     private boolean isExplicitBodyType(Object bodyType) {
         return bodyType instanceof ParameterizedTypeReference || bodyType instanceof Class;
     }
