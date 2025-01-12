@@ -20,6 +20,7 @@ public class LoggingServerHttpRequestDecorator extends ServerHttpRequestDecorato
 
     private final BodyProvider bodyProvider = new BodyProvider();
     private final String requestInfo;
+    private String fullBodyMessage;
 
     public LoggingServerHttpRequestDecorator(
             ServerHttpRequest delegate, LoggingProperties loggingProperties, String requestInfo) {
@@ -34,15 +35,15 @@ public class LoggingServerHttpRequestDecorator extends ServerHttpRequestDecorato
                         Flux.<DataBuffer>empty()
                                 .doOnComplete(
                                         () ->
-                                                log.info(
+                                                log.debug(
                                                         requestInfo.concat(
                                                                 bodyProvider
                                                                         .createNoBodyMessage()))))
                 .doOnNext(
                         dataBuffer -> {
-                            String fullBodyMessage =
+                            this.fullBodyMessage =
                                     bodyProvider.createBodyMessage(copyBodyBuffer(dataBuffer));
-                            log.info(requestInfo.concat(fullBodyMessage));
+                            log.debug(requestInfo.concat(this.fullBodyMessage));
                         });
     }
 
@@ -56,5 +57,9 @@ public class LoggingServerHttpRequestDecorator extends ServerHttpRequestDecorato
         } catch (IOException e) {
             throw new DataBufferCopyingException(e);
         }
+    }
+
+    public String getFullBodyMessage(){
+        return fullBodyMessage;
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public final class DefaultServerResponseLogger implements ServerResponseLogger {
@@ -30,19 +31,33 @@ public final class DefaultServerResponseLogger implements ServerResponseLogger {
     }
 
     @Override
-    public ServerHttpResponse log(ServerWebExchange exchange, long exchangeStartTimeMillis) {
-        Supplier<String> baseMessageSupplier =
-                createMetadataMessage(exchange, exchangeStartTimeMillis);
+    public ServerHttpResponse log(ServerWebExchange exchange, LoggingServerHttpRequestDecorator loggedRequest, long exchangeStartTimeMillis) {
+        Supplier<String> msgSupplier = createMetadataMessage(exchange, exchangeStartTimeMillis);
 
         if (properties.isLogBody()) {
-            return new LoggingServerHttpResponseDecorator(
-                    exchange.getResponse(), baseMessageSupplier);
+            return new LoggingServerHttpResponseDecorator(exchange.getResponse(), msgSupplier);
 
         } else {
             exchange.getResponse()
                     .beforeCommit(
-                            () -> Mono.fromRunnable(() -> log.info(baseMessageSupplier.get())));
+                            () -> Mono.fromRunnable(() -> logImpl(exchange, msgSupplier.get())));
             return exchange.getResponse();
+        }
+    }
+
+    private void logImpl(ServerWebExchange exchange, String msg) {
+        final var code = exchange.getResponse().getStatusCode();
+
+        if (Objects.isNull(code)) {
+            log.warn(msg);
+            return;
+        }
+        if (code.is2xxSuccessful() || code.is3xxRedirection()) {
+            log.debug(msg);
+        } else if (code.is4xxClientError() || code.is5xxServerError()) {
+            log.error(msg);
+        } else {
+            log.warn(msg);
         }
     }
 

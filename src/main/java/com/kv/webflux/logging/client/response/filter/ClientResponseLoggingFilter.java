@@ -29,7 +29,7 @@ public class ClientResponseLoggingFilter implements ExchangeFilterFunction {
                                         .formatMessage(tuple.getT1(), tuple.getT2())
                                         .doOnNext(
                                                 responseData ->
-                                                        log.info(responseData.getLogMessage()))
+                                                        log.debug(responseData.getLogMessage()))
                                         .map(ResponseData::getResponse));
     }
 }

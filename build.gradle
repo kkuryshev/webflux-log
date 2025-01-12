@@ -1,0 +1,116 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.3.2'
+    id 'io.spring.dependency-management' version '1.1.6'
+    id 'com.diffplug.spotless' version '6.25.0'
+    id "maven-publish"
+}
+
+group = 'com.kv.webflux.logging'
+archivesBaseName = 'webflux-log'
+version '0.0.7-SNAPSHOT'
+
+java.sourceCompatibility = JavaVersion.VERSION_21
+java.targetCompatibility = JavaVersion.VERSION_21
+
+jar {
+    archiveClassifier = ''
+    enabled = true
+}
+
+bootJar {
+    enabled = false
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+publishing {
+    publications {
+//        maven(MavenPublication) {
+//            artifact("build/libs/webflux-log-$version" + ".jar") {
+//                extension "jar"
+//            }
+//        }
+        gpr(MavenPublication) {
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/kkuryshev/webflux-log")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
+                password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+}
+
+task printEnvVariables {
+    doLast {
+        println "GITLAB_HOME_TOKEN: ${System.getenv('GITLAB_HOME_TOKEN')}"
+    }
+}
+
+ext {
+    set('springCloudVersion', "2023.0.2")
+    set('springBootVersion', "3.2.2")
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
+        mavenBom "org.springframework.boot:spring-boot-dependencies:$springBootVersion"
+    }
+}
+
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    implementation 'org.apache.commons:commons-lang3:3.0'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-jetty'
+    testImplementation 'org.springframework.boot:spring-boot-starter-tomcat'
+    testImplementation "org.wiremock:wiremock-standalone:3.6.0"
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'io.projectreactor:reactor-test'
+}
+
+spotless {
+    encoding = "UTF-8"
+    lineEndings = com.diffplug.spotless.LineEnding.UNIX
+    format("misc") {
+        target("*.gradle", "*.md", ".gitignore")
+        indentWithSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    java {
+        palantirJavaFormat()
+        removeUnusedImports()
+        googleJavaFormat().aosp()
+
+        // "" - all other imports
+        // "\\#" - static import
+        importOrder("", "javax", "java", "\\#")
+        targetExclude("build/**/*.java")
+        indentWithSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

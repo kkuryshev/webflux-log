@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.nio.channels.Channels;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class LoggingServerHttpResponseDecorator extends ServerHttpResponseDecorator {
@@ -32,10 +33,26 @@ public class LoggingServerHttpResponseDecorator extends ServerHttpResponseDecora
                     String bodyMessage = provider.createBodyMessage(bodyOutputStream);
                     String fullLogMessage = sourceLogMessage.get().concat(bodyMessage);
 
-                    log.info(fullLogMessage);
+                    logImpl(delegate, fullLogMessage);
 
                     return Mono.empty();
                 });
+    }
+
+    private void logImpl(ServerHttpResponse response, String msg) {
+        final var code = response.getStatusCode();
+
+        if (Objects.isNull(code)) {
+            log.warn(msg);
+            return;
+        }
+        if (code.is2xxSuccessful() || code.is3xxRedirection()) {
+            log.debug(msg);
+        } else if (code.is4xxClientError() || code.is5xxServerError()) {
+            log.error(msg);
+        } else {
+            log.warn(msg);
+        }
     }
 
     @Override
