@@ -23,15 +23,20 @@ public final class BodyProvider {
     }
 
     public String createBodyMessage(String body) {
-        return StringUtils.isNotBlank(body) ? create(body) : createNoBodyMessage();
+        return createBodyMessage(body, true);
+    }
+
+    public String createBodyMessage(String body, boolean truncate) {
+        return StringUtils.isNotBlank(body) ? create(body, truncate) : createNoBodyMessage();
     }
 
     public String createNoBodyMessage() {
-        return create(LoggingUtils.NO_BODY_MESSAGE);
+        return create(LoggingUtils.NO_BODY_MESSAGE, false);
     }
 
-    private String create(String body) {
-        final var truncateBody = body.length() > 100 ? StringUtils.left(body, 100) + "..." : body;
+    private String create(String body, boolean truncate) {
+        final var truncateBody =
+                truncate ? body.length() > 100 ? StringUtils.left(body, 100) + "..." : body : body;
         return " BODY: [ ".concat(truncateBody).concat(" ]");
     }
 }

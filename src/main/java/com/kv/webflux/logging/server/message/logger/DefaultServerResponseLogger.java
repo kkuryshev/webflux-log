@@ -1,6 +1,7 @@
 package com.kv.webflux.logging.server.message.logger;
 
 import com.kv.webflux.logging.client.LoggingProperties;
+import com.kv.webflux.logging.provider.BodyProvider;
 import com.kv.webflux.logging.provider.HttpStatusProvider;
 import com.kv.webflux.logging.provider.TimeElapsedProvider;
 import com.kv.webflux.logging.server.message.formatter.ServerMetadataMessageFormatter;
@@ -31,11 +32,11 @@ public final class DefaultServerResponseLogger implements ServerResponseLogger {
     }
 
     @Override
-    public ServerHttpResponse log(ServerWebExchange exchange, LoggingServerHttpRequestDecorator loggedRequest, long exchangeStartTimeMillis) {
+    public ServerHttpResponse log(ServerWebExchange exchange, long exchangeStartTimeMillis) {
         Supplier<String> msgSupplier = createMetadataMessage(exchange, exchangeStartTimeMillis);
 
         if (properties.isLogBody()) {
-            return new LoggingServerHttpResponseDecorator(exchange.getResponse(), msgSupplier);
+            return new LoggingServerHttpResponseDecorator(exchange, msgSupplier);
 
         } else {
             exchange.getResponse()
@@ -45,9 +46,9 @@ public final class DefaultServerResponseLogger implements ServerResponseLogger {
         }
     }
 
-    private void logImpl(ServerWebExchange exchange, String msg) {
+    public static void logImpl(ServerWebExchange exchange, String msg) {
         final var code = exchange.getResponse().getStatusCode();
-
+        final BodyProvider provider = new BodyProvider();
         if (Objects.isNull(code)) {
             log.warn(msg);
             return;
@@ -55,7 +56,15 @@ public final class DefaultServerResponseLogger implements ServerResponseLogger {
         if (code.is2xxSuccessful() || code.is3xxRedirection()) {
             log.debug(msg);
         } else if (code.is4xxClientError() || code.is5xxServerError()) {
-            log.error(msg);
+            if (true && exchange.getRequest() instanceof LoggingServerHttpRequestDecorator req) {
+                log.error(
+                        String.format(
+                                "%s , request body was %s",
+                                msg, provider.createBodyMessage(req.getFullBodyMessage(), false)));
+            } else {
+                log.error(msg);
+            }
+
         } else {
             log.warn(msg);
         }

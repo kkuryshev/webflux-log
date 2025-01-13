@@ -6,53 +6,36 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.reactivestreams.Publisher;
 import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.http.server.reactive.ServerHttpResponseDecorator;
 import org.springframework.util.FastByteArrayOutputStream;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.nio.channels.Channels;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 public class LoggingServerHttpResponseDecorator extends ServerHttpResponseDecorator {
 
     private static final Log log = LogFactory.getLog(LoggingServerHttpResponseDecorator.class);
-
     private final BodyProvider provider = new BodyProvider();
     private final FastByteArrayOutputStream bodyOutputStream = new FastByteArrayOutputStream();
 
     public LoggingServerHttpResponseDecorator(
-            ServerHttpResponse delegate, Supplier<String> sourceLogMessage) {
-        super(delegate);
+            ServerWebExchange exchange, Supplier<String> sourceLogMessage) {
+        super(exchange.getResponse());
 
-        delegate.beforeCommit(
-                () -> {
-                    String bodyMessage = provider.createBodyMessage(bodyOutputStream);
-                    String fullLogMessage = sourceLogMessage.get().concat(bodyMessage);
+        exchange.getResponse()
+                .beforeCommit(
+                        () -> {
+                            String bodyMessage = provider.createBodyMessage(bodyOutputStream);
+                            String fullLogMessage = sourceLogMessage.get().concat(bodyMessage);
 
-                    logImpl(delegate, fullLogMessage);
+                            DefaultServerResponseLogger.logImpl(exchange, fullLogMessage);
 
-                    return Mono.empty();
-                });
-    }
-
-    private void logImpl(ServerHttpResponse response, String msg) {
-        final var code = response.getStatusCode();
-
-        if (Objects.isNull(code)) {
-            log.warn(msg);
-            return;
-        }
-        if (code.is2xxSuccessful() || code.is3xxRedirection()) {
-            log.debug(msg);
-        } else if (code.is4xxClientError() || code.is5xxServerError()) {
-            log.error(msg);
-        } else {
-            log.warn(msg);
-        }
+                            return Mono.empty();
+                        });
     }
 
     @Override

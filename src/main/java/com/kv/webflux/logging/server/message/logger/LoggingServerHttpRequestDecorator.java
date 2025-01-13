@@ -41,25 +41,25 @@ public class LoggingServerHttpRequestDecorator extends ServerHttpRequestDecorato
                                                                         .createNoBodyMessage()))))
                 .doOnNext(
                         dataBuffer -> {
-                            this.fullBodyMessage =
-                                    bodyProvider.createBodyMessage(copyBodyBuffer(dataBuffer));
+                            this.fullBodyMessage = copyBodyBuffer(dataBuffer);
+                            bodyProvider.createBodyMessage(this.fullBodyMessage);
                             log.debug(requestInfo.concat(this.fullBodyMessage));
                         });
     }
 
-    private FastByteArrayOutputStream copyBodyBuffer(DataBuffer buffer) {
+    private String copyBodyBuffer(DataBuffer buffer) {
         try {
             FastByteArrayOutputStream bodyStream = new FastByteArrayOutputStream();
-            Channels.newChannel(bodyStream).write(buffer.asByteBuffer().asReadOnlyBuffer());
+            Channels.newChannel(bodyStream).write(buffer.toByteBuffer().asReadOnlyBuffer());
 
-            return bodyStream;
+            return bodyStream.toString();
 
         } catch (IOException e) {
             throw new DataBufferCopyingException(e);
         }
     }
 
-    public String getFullBodyMessage(){
+    public String getFullBodyMessage() {
         return fullBodyMessage;
     }
 }

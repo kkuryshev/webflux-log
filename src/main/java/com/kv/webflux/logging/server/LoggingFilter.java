@@ -35,7 +35,8 @@ public class LoggingFilter implements WebFilter {
         long startMillis = System.currentTimeMillis();
 
         ServerHttpRequest loggedRequest = requestMessageCreator.log(exchange);
-        ServerHttpResponse loggedResponse = responseMessageCreator.log(exchange, startMillis);
+        final var exch1 = exchange.mutate().request(loggedRequest).build();
+        ServerHttpResponse loggedResponse = responseMessageCreator.log(exch1, startMillis);
 
         return chain.filter(
                 exchange.mutate().request(loggedRequest).response(loggedResponse).build());

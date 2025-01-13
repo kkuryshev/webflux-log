@@ -54,7 +54,7 @@ public class LoggingFilterComponentTest extends BaseIntegrationTest {
         //        assertTrue(logs.contains(" HEADERS: [ Content-Type=application/json"));
         assertTrue(logs.contains(" COOKIES (Set-Cookie): [ ] BODY: [ {no body} ]"));
 
-        assertEquals(1, StringUtils.countMatches(logs, "BODY"));
+        assertEquals(2, StringUtils.countMatches(logs, "BODY"));
     }
 
     @Test
@@ -118,8 +118,7 @@ public class LoggingFilterComponentTest extends BaseIntegrationTest {
         //        assertEquals(3, StringUtils.countMatches(logs, " REQ-ID: [ TEST-REQ-ID_"));
         assertTrue(logs.contains(" HEADERS: [ "));
         assertTrue(logs.contains(" COOKIES: [ ]"));
-        assertTrue(logs.contains(" BODY: [ " + validReqJson + " ]"));
-
+        assertTrue(logs.contains(" BODY: [ " + validReqJson + "-RESPONSE ]"));
         assertTrue(
                 logs.contains(" INRESP: POST http://localhost:8080/test/endpoint  ELAPSED TIME:"));
         assertTrue(logs.contains(" STATUS: 200 OK"));
